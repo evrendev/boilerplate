@@ -10,19 +10,19 @@ You will need to run its Entity Framework Core migrations after configure databa
 * Ensure the tool EF was already installed. You can find some help here.
 
 ```bash
-dotnet ef database update -s ../Web --verbose
+dotnet ef database update -s ../Api --verbose
 ```
 
 ## Running
 
-Open a command prompt in the Web folder and execute the following commands:
+Open a command prompt in the Api folder and execute the following commands:
 
 ```bash
 dotnet watch run
 ```
 ## Running the sample using Docker
 
-You can run the Web sample by running these commands from the root folder (where the .sln file is located):
+You can run the Api sample by running these commands from the root folder (where the .sln file is located):
 
 ```
 docker-compose build
