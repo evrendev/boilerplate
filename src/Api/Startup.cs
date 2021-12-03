@@ -8,7 +8,6 @@ using EvrenDev.Application.Extensions;
 using EvrenDev.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using EvrenDev.Api.Middlewares;
 
 namespace EvrenDev.Api
 {
