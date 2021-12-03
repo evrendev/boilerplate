@@ -20,6 +20,14 @@ Open a command prompt in the Web folder and execute the following commands:
 ```bash
 dotnet watch run
 ```
+## Running the sample using Docker
+
+You can run the Web sample by running these commands from the root folder (where the .sln file is located):
+
+```
+docker-compose build
+docker-compose up
+
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
