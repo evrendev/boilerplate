@@ -258,3 +258,4 @@ paket-files/
 logs/
 
 appsettings.Development.json
+.DS_Store

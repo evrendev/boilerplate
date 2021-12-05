@@ -5,6 +5,7 @@ using EvrenDev.Application.Interfaces.Repositories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 
 namespace EvrenDev.Application.Features.Settings.Department.Commands.Update
 {
@@ -12,11 +13,14 @@ namespace EvrenDev.Application.Features.Settings.Department.Commands.Update
     {
         private readonly IDepartmentRepository _repository;
         private IUnitOfWork _unitOfWork { get; set; }
+        private readonly IStringLocalizer<UpdateDepartmentCommand> _loc;
 
-        public UpdateDepartmentCommandHandler(IDepartmentRepository repository, 
+        public UpdateDepartmentCommandHandler(IDepartmentRepository repository,
+            IStringLocalizer<UpdateDepartmentCommand> loc,
             IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _loc = loc;
             _unitOfWork = unitOfWork;
         }
 
@@ -35,7 +39,10 @@ namespace EvrenDev.Application.Features.Settings.Department.Commands.Update
 
                     await _repository.UpdateAsync(item);
                     await _unitOfWork.Commit(cancellationToken);
-                    return Result<Guid>.Success(item.Id, $"{item.Title} departmanı başarılı bir şekilde güncellendi.");
+
+                    var message = string.Format(_loc["update_content_success"], item.Title);
+                    
+                    return Result<Guid>.Success(item.Id, message);
                 }
         }
     }

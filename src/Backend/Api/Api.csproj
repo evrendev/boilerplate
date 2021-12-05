@@ -17,4 +17,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="MailTemplate\**"> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    </Content> 
+  </ItemGroup>
 </Project>

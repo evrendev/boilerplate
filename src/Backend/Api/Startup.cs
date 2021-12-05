@@ -6,8 +6,8 @@ using Microsoft.Extensions.Hosting;
 using EvrenDev.Api.Extensions;
 using EvrenDev.Application.Extensions;
 using EvrenDev.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 namespace EvrenDev.Api
 {
@@ -32,19 +32,6 @@ namespace EvrenDev.Api
             services.AddSession();
             services.AddDistributedMemoryCache();
             services.AddMemoryCache();
-
-            services.AddMvc(o =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                o.Filters.Add(new AuthorizeFilter(policy));
-            })
-            .AddNewtonsoftJson(jsonOptions => 
-                jsonOptions.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
-            
-            services.AddRouting(options => options.LowercaseUrls = true);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,6 +40,15 @@ namespace EvrenDev.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+
+            var options = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(new CultureInfo("tr-TR"))
+            };
+            app.UseRequestLocalization(options);
+
+            app.UseMiddleware<LocalizationMiddleware>();
 
             app.ConfigureSwagger();
 

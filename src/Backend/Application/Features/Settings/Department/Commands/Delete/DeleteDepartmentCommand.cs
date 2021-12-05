@@ -5,6 +5,7 @@ using EvrenDev.Application.Interfaces.Repositories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 
 namespace EvrenDev.Application.Features.Settings.Department.Commands.Delete
 {
@@ -12,11 +13,14 @@ namespace EvrenDev.Application.Features.Settings.Department.Commands.Delete
     {
         private readonly IDepartmentRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStringLocalizer<DeleteDepartmentCommand> _loc;
 
-        public DeleteDepartmentCommandHandler(IDepartmentRepository repository, 
+        public DeleteDepartmentCommandHandler(IDepartmentRepository repository,
+            IStringLocalizer<DeleteDepartmentCommand> loc, 
             IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _loc = loc;
             _unitOfWork = unitOfWork;
         }
 
@@ -26,7 +30,10 @@ namespace EvrenDev.Application.Features.Settings.Department.Commands.Delete
             var item = await _repository.GetByIdAsync(command.Id);
             await _repository.DeleteAsync(item);
             await _unitOfWork.Commit(cancellationToken);
-            return Result<Guid>.Success(item.Id, $"{item.Title} departmanı başarılı bir şekilde {(item.Deleted ? "silindi" : "geri yüklendi")}");
+            
+            var message = string.Format(_loc["delete_content_success"], item.Title, item.Deleted ? _loc["deleted"] : _loc["restored"]);
+
+            return Result<Guid>.Success(item.Id, message);
         }
     }
 }

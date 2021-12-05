@@ -4,20 +4,22 @@ using EvrenDev.Application.DTOS.User;
 using EvrenDev.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EvrenDev.Application.Enums.Identity;
+using Microsoft.Extensions.Localization;
 
 namespace EvrenDev.Application.Features.Settings.User.Commands.Update
 {
     public class UpdateApplicationUserCommandHandler : IRequestHandler<UpdateApplicationUserCommand, Result<Guid>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IStringLocalizer<UpdateApplicationUserCommand> _loc;
 
-        public UpdateApplicationUserCommandHandler(UserManager<ApplicationUser> userManager)
+        public UpdateApplicationUserCommandHandler(UserManager<ApplicationUser> userManager,
+            IStringLocalizer<UpdateApplicationUserCommand> loc)
         {
             _userManager = userManager;
+            _loc = loc;
         }
 
         public async Task<Result<Guid>> Handle(UpdateApplicationUserCommand command, 
@@ -25,7 +27,11 @@ namespace EvrenDev.Application.Features.Settings.User.Commands.Update
         {
             var user = await _userManager.FindByIdAsync(command.Id.ToString());
             if (user == null)
+            {
+                var message = string.Format(_loc["user_not_found"], command.Id);
+
                 return Result<Guid>.Fail($"Kullanıcı bulunamadı. Id: {command.Id}");
+            }
 
             user.FirstName = command.FirstName;
             user.LastName = command.LastName;
@@ -47,11 +53,15 @@ namespace EvrenDev.Application.Features.Settings.User.Commands.Update
                     await _userManager.AddToRoleAsync(user, role);
                 }
 
-                return Result<Guid>.Success($"{user.FirstName} {user.LastName} kullanıcısı başarılı bir şekilde güncellendi.");
+                var message = string.Format(_loc["update_user_success"], user.Email);
+
+                return Result<Guid>.Success(message);
             }
             else
             {
-                return Result<Guid>.Fail($"{command.FirstName} {command.LastName} kullanıcısının bilgileri düzenlenirken bir hata oluştu.");
+                var message = string.Format(_loc["update_user_failed"], user.Email);
+
+                return Result<Guid>.Fail(message);
             }
         }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 
 namespace EvrenDev.Application.Features.Settings.User.Commands.Create
 { 
@@ -14,11 +15,14 @@ namespace EvrenDev.Application.Features.Settings.User.Commands.Create
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<CreateApplicationUserCommand> _loc;
 
-        public CreateApplicationUserCommandHandler(UserManager<ApplicationUser> userManager, 
+        public CreateApplicationUserCommandHandler(UserManager<ApplicationUser> userManager,
+            IStringLocalizer<CreateApplicationUserCommand> loc, 
             IMapper mapper)
         {
             _userManager = userManager;
+            _loc = loc;
             _mapper = mapper;
         }
 
@@ -27,8 +31,11 @@ namespace EvrenDev.Application.Features.Settings.User.Commands.Create
         {
             var userIsExist = await _userManager.FindByEmailAsync(request.Email);
 
-            if(userIsExist != null) 
-                return Result<Guid>.Fail("Mevcut eposta adresi ile daha önceden kullanıcı oluşturulmuş.");
+            if(userIsExist != null) {
+                var message = string.Format(_loc["user_is_exist"], request.Email);
+
+                return Result<Guid>.Fail(message);
+            }
 
             var applicationUser = _mapper.Map<ApplicationUser>(request);
 
@@ -41,11 +48,15 @@ namespace EvrenDev.Application.Features.Settings.User.Commands.Create
                     await _userManager.AddToRoleAsync(applicationUser, role);
                 }
 
-                return Result<Guid>.Success($"{request.FirstName} {request.LastName} kullanıcısı başarılı bir şekilde oluşturuldu.");
+                var message = string.Format(_loc["create_user_success"], request.Email);
+
+                return Result<Guid>.Success(message);
             }
             else
             {
-                return Result<Guid>.Fail($"{request.FirstName} {request.LastName} kullanıcısı eklenirken bir hata oluştu.");
+                var message = string.Format(_loc["create_user_failed"], request.Email);
+                
+                return Result<Guid>.Fail(message);
             }
         }
     }

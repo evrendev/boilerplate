@@ -1,7 +1,9 @@
 ﻿using EvrenDev.Application.DTOS.Settings;
+using EvrenDev.Application.Extensions;
 using EvrenDev.Application.Interfaces;
 using EvrenDev.Application.Interfaces.Repositories;
 using EvrenDev.Application.Interfaces.Shared;
+using EvrenDev.Application.Localization;
 using EvrenDev.Application.Logging;
 using EvrenDev.Domain.Entities;
 using EvrenDev.Infrastructure;
@@ -9,12 +11,15 @@ using EvrenDev.Infrastructure.Identity.Services;
 using EvrenDev.Infrastructure.Repositories;
 using EvrenDev.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -40,6 +45,31 @@ namespace EvrenDev.Api.Extensions
         {
             services.RegisterSwagger();
             services.AddVersioning();
+            services.AddRouing();
+            services.AddLocalizationSupport();
+        }
+
+        private static void AddLocalizationSupport(this IServiceCollection services)
+        {
+            services.AddLocalization();
+            services.AddSingleton<LocalizationMiddleware>();
+            services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+        }
+
+        private static void AddRouing(this IServiceCollection services)
+        {
+            services.AddMvc(o =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                o.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .AddNewtonsoftJson(jsonOptions => 
+                jsonOptions.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+            
+            services.AddRouting(options => options.LowercaseUrls = true);
         }
 
         private static void RegisterSwagger(this IServiceCollection services)

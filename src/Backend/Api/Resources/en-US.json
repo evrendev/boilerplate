@@ -1,0 +1,17 @@
+{
+  "login_success" : "Succesfuly login with {0} email address.",
+  "login_password_failed": "Password is wrong for {0} email address!",
+  "login_email_failed": "Your email address is not registered in our database!",
+  "create_content_success": "{0} content is created successfully.",
+  "update_content_success": "{0} content is updated successfully.",
+  "delete_content_success": "{0} content is {1} successfully.",
+  "deleted": "deleted",
+  "restored": "restored",
+  "user_is_exist": "The {0} email address is already registered. Choose a different email address or if you forgot your password try to recover your password by clicking the forgot password link.",
+  "user_is_not_found": "{0} is is not found.",
+  "create_user_success": "User with {0} email address has been successfuly created.",
+  "create_user_failed": "Error adding user with email address {0}",
+  "update_user_success": "User with {0} email address has been successfuly updated.",
+  "update_user_failed": "Error updating user with email address {0}.",
+  "delete_user_success": "User with {0} email address has been successfuly {1}."
+}

@@ -1,0 +1,17 @@
+{
+  "login_success" : "{0} eposta adresi ile başarılı bir şekilde giriş yaptınız.",
+  "login_password_failed": "{0} eposta adresi için parola doğru gözükmüyor!",
+  "login_email_failed": "Eposta adresiniz veritabanımızda kayıtlı değil!",
+  "create_content_success": "{0} içeriği başarılı bir şekilde eklendi.",
+  "update_content_success": "{0} içeriği başarılı bir şekilde güncellendi.",
+  "delete_content_success": "{0} içeriği başarılı bir şekilde {1}.",
+  "deleted": "silindi",
+  "restored": "geri yüklendi",
+  "user_is_not_found": "{0} id numarası ile kayıtlı kullanıcı bulunamadı.",
+  "user_is_exist": "{0} eposta adresi veritabanında kayıtlı. Farklı bir eposta adresi seçin ya da şifrenizi unuttuysanız şifremi unuttum bağlantısına tıklayarak parolanızı kurtarmayı deneyin.",
+  "create_user_success": "{0} eposta adresli kullanıcı başarılı bir şekilde eklendi.",
+  "create_user_failed": "{0} eposta adresli kullanıcı eklenirken hata oluştu.",
+  "update_user_success": "{0} eposta adresli kullanıcı başarılı bir şekilde güncellendi.",
+  "update_user_failed": "{0} eposta adresli kullanıcı güncellenirken hata oluştu.",
+  "delete_user_success": "{0} eposta adresli kullanıcı başarılı bir şekilde {1}."
+}

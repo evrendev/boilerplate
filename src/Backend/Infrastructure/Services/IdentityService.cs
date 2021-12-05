@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Microsoft.Extensions.Localization;
 
 namespace EvrenDev.Infrastructure.Identity.Services
 {
@@ -27,18 +28,22 @@ namespace EvrenDev.Infrastructure.Identity.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IStringLocalizer<ApplicationUser> _loc;
         private readonly JWTSettings _jwtSettings;
         private readonly IDateTimeService _dateTimeService;
         private readonly IEmailSender _emailSender;
 
         public IdentityService(UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
+            IStringLocalizer<ApplicationUser> loc,
             IOptions<JWTSettings> jwtSettings,
             IDateTimeService dateTimeService,
-            SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+            SignInManager<ApplicationUser> signInManager, 
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _loc = loc;
             _jwtSettings = jwtSettings.Value;
             _dateTimeService = dateTimeService;
             _signInManager = signInManager;
@@ -67,9 +72,20 @@ namespace EvrenDev.Infrastructure.Identity.Services
                 
                 var refreshToken = GenerateRefreshToken(ipAddress);
                 response.RefreshToken = refreshToken.Token;
-                return Result<TokenResponse>.Success(response, "Başarılı bir şekilde giriş yapıldı.");
+
+                var message = string.Format(_loc["login_success"], model.Email);
+
+                return Result<TokenResponse>.Success(response, message);
             } else {
-                return Result<TokenResponse>.Fail("Eposta adresi veya parola hatalı!");
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null) {
+                    var message = string.Format(_loc["login_password_failed"], model.Email);
+                    return Result<TokenResponse>.Fail(message);
+                } else {
+                    var message = _loc["login_email_failed"];
+                    return Result<TokenResponse>.Fail(message);
+                }
             }
         }
 
