@@ -5,10 +5,11 @@
     sidebar-component
     .main
       navbar-component
-        main.content
-          .container-fluid.p-0
-            .row.mb-2.mb-xl-3
-              slot
+      main.content
+        .container-fluid.p-0
+          .row.mb-2.mb-xl-3
+            slot
+      footer-component
 </template>
 
 <script>
@@ -19,12 +20,14 @@ import "@fortawesome/fontawesome-free/js/all.js"
 
 import sidebarComponent from "@/components/admin/Sidebar"
 import navbarComponent from "@/components/admin/Navbar"
+import footerComponent from "@/components/admin/Footer"
 
 export default {
   name: "AdminLayout",
   components: {
     sidebarComponent,
-    navbarComponent
+    navbarComponent,
+    footerComponent
   }
 }
 </script>
