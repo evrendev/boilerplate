@@ -1,6 +1,11 @@
 <script>
+import LangDropdown from "@/components/app/LangDropdown.vue"
+
 export default {
   name: "Home",
+  components: {
+    LangDropdown
+  },
   metaInfo: {
     title: "Evren.Dev",
     titleTemplate: "%s - Web Application",
@@ -14,5 +19,7 @@ export default {
 
 <template lang="pug">
   .content
-    h1 This is homepage!
+    <lang-dropdown />
+    h1 {{ $t("message") }}
+    <p class="date">Today's Date: {{ $d(new Date(), 'long') }}</p>
 </template>
