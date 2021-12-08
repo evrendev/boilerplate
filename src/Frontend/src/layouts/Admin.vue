@@ -5,15 +5,11 @@
     sidebar-component
     .main
       navbar-component
-      main.content
-        .container-fluid.p-0
-          .row.mb-2.mb-xl-3
-            slot
+      slot
       footer-component
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 import "@fortawesome/fontawesome-free/css/all.min.css"
 import "@fortawesome/fontawesome-free/js/all.js"
@@ -32,4 +28,4 @@ export default {
 }
 </script>
 
-<style src="@/styles/admin/app.css"></style>
+<style lang="scss" src="@/styles/admin/app.scss"></style>

@@ -1,20 +1,24 @@
 import Vue from "vue"
 import Vuex from "vuex"
+import axios from "axios"
+
+import { account } from "./account.module"
+import { dashboard } from "./dashboard.module"
 
 Vue.use(Vuex)
 
-import actions from "./actions"
-import getters from "./getters"
-import mutations from "./mutations"
+axios.defaults.baseURL = process.env.VUE_APP_BACKEND_URL
 
-const state = {
-  displayLoader: false,
-  loggedUser: localStorage.getItem("loggedUser") || null
-}
-
-export default new Vuex.Store({
-  state,
-  actions,
-  getters,
-  mutations
+const store = new Vuex.Store({
+  modules: {
+    account,
+    dashboard
+  }
 })
+
+export default async function init() {
+  await store.dispatch("account/init")
+  await store.dispatch("dashboard/init")
+
+  return store
+}

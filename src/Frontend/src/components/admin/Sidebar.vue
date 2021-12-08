@@ -1,49 +1,32 @@
 <script>
+import { mapState } from "vuex"
+import menuLink from "./MenuLink.vue"
+import items from "@/data/menu.js"
+
 export default {
   name: "Sidebar",
+  components: {
+    menuLink
+  },
+  computed: {
+    ...mapState("dashboard", ["menuOpened"])
+  },
   data() {
     return {
-      appName: process.env.VUE_APP_NAME
+      appName: process.env.VUE_APP_NAME,
+      menuItems: items
     }
   }
 }
 </script>
 
 <template lang="pug">
-  nav#sidebar.sidebar
+  nav#sidebar.sidebar(:class="[ menuOpened ? 'collapsed' : '' ]")
     .sidebar-content.js-simplebar
       a.sidebar-brand(href="#")
-        span.align-middle {{ appName }}
+        span.align-middle {{ appName }} Admin
       ul.sidebar-nav
-        li.sidebar-header
-          | Pages
-        li.sidebar-item.active
-          router-link.sidebar-link(:to="{ name: 'admin.dashboard' }")
-            i.fas.fa-tachometer-alt.align-middle
-            span.align-middle Dashboard
-        li.sidebar-item
-          a.sidebar-link.collapsed(data-bs-target="#auth" data-bs-toggle="collapse")
-            i.fas.fa-bars.align-middle
-            span.align-middle Menu Example
-          ul#auth.sidebar-dropdown.list-unstyled.collapse(data-bs-parent="#sidebar")
-            li.sidebar-item
-              a.sidebar-link(href="#") Menu Example
-            li.sidebar-item
-              a.sidebar-link(href="#") Menu Example
-        li.sidebar-item
-          a.sidebar-link(href="#")
-            i.fas.fa-bars.align-middle
-            span.align-middle Page Example
-        li.sidebar-item
-          a.sidebar-link(href="#")
-            i.fas.fa-bars.align-middle
-            span.align-middle Menu Example
-        li.sidebar-item
-          a.sidebar-link(href="#")
-            i.fas.fa-bars.align-middle
-            span.align-middle Menu Example
-        li.sidebar-item
-          a.sidebar-link(href="#")
-            i.fas.fa-bars.align-middle
-            span.align-middle Menu Example
+        menu-link(v-for="menuItem in menuItems"
+          :label="menuItem.label"
+          :childs="menuItem.childs")
 </template>

@@ -8,5 +8,3 @@ export default {
   div.main
     slot
 </template>
-
-<style src="@/styles/app/app.css"></style>

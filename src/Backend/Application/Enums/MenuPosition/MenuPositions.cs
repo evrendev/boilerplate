@@ -5,17 +5,22 @@ namespace EvrenDev.Application.Enums.Language
 {
     public class MenuPositions
     {
-        public static MenuPositions TopMenu { get; } = new MenuPositions(1, "Top Menu");
-        public static MenuPositions Footer { get; } = new MenuPositions(2, "Footer Menu");
+        public static MenuPositions TopMenu { get; } = new MenuPositions(value:1, 
+            label: "Top Menu"
+        );
+
+        public static MenuPositions Footer { get; } = new MenuPositions(value: 2, 
+            label: "Footer Menu"
+        );
 
         public int Value { get; set; }
-        public string Text { get; set; }
+        public string Label { get; set; }
 
         public MenuPositions(int value, 
-            string text)
+            string label)
         {
             Value = value;
-            Text = text;
+            Label = label;
         }
 
         public static IEnumerable<MenuPositions> List()

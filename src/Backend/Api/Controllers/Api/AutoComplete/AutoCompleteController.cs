@@ -24,10 +24,9 @@ namespace EvrenDev.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AutoCompleteResponse))]
-        public async Task<IActionResult> Index([FromQuery] string table, string column, string query)
+        public async Task<IActionResult> Index([FromQuery] string table, 
+            string column, 
+            string query)
         {
             var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationConnection");
             await using var connection = new SqlConnection(connectionString);

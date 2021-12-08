@@ -1,10 +1,21 @@
 <template lang="pug">
-    h1 Dashboard
+main.content
+  .container-fluid.p-0
+    h1.h3-mb-3 
+      strong Kontrol
+      |  Paneli
+    .row
+      .col-12
+        card
 </template>
 
 <script>
+import card from "@/components/admin/Card"
 export default {
   name: "Dashboard",
+  components: {
+    card
+  },
   metaInfo: {
     title: "Kontrol Paneli",
     titleTemplate: "%s | Evren.Dev",

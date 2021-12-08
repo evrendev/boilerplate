@@ -190,13 +190,13 @@ namespace EvrenDev.Api.Extensions
 
             services.AddCors(options =>
             {
-                    options.AddPolicy("CorsPolicy-public",
-                        builder => builder
-                            .SetIsOriginAllowed(_ => true)
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials()
-                            .Build());
+                options.AddPolicy(name: "CorsPolicy",
+                                  builder =>
+                                  {
+                                      builder.AllowAnyOrigin();
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyHeader();
+                                  });
             });
         }
     }

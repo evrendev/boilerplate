@@ -1,0 +1,10 @@
+{
+  "app": {
+    "title": "International Gourmet Coffee"
+  },
+  "account": {
+    "login": {
+      "title": "Giriş Yapın"
+    }
+  }
+}

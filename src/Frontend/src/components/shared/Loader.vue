@@ -1,66 +1,74 @@
 <script>
 export default {
-  name: "Loading",
-  props: {
-    text: String
-  }
+  name: "Loader"
 }
 </script>
 
 <template lang="pug">
-  .fixed.top-0.left-0.z-50.w-screen.h-screen.flex.items-center.justify-center(style='background: rgba(0, 0, 0, 0.3);')
-    .bg-white.border.py-2.px-5.rounded-lg.flex.items-center.flex-col
-      .loader-dots.block.relative.w-20.h-5.mt-2
-        .absolute.top-0.mt-1.w-3.h-3.rounded-full.bg-green-500
-        .absolute.top-0.mt-1.w-3.h-3.rounded-full.bg-green-500
-        .absolute.top-0.mt-1.w-3.h-3.rounded-full.bg-green-500
-        .absolute.top-0.mt-1.w-3.h-3.rounded-full.bg-green-500
-      .text-gray-500.text-xs.font-light.mt-2.text-center
-            | {{ text }}
+.text-center
+  span.loader
+    span.loader-inner
 </template>
 
 <style scoped lang="postcss">
-.loader-dots div {
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+.loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid #000;
+  top: 50%;
+  animation: loader 2s infinite ease;
 }
-.loader-dots div:nth-child(1) {
-  left: 8px;
-  animation: loader-dots1 0.6s infinite;
+
+.loader-inner {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  animation: loader-inner 2s infinite ease-in;
 }
-.loader-dots div:nth-child(2) {
-  left: 8px;
-  animation: loader-dots2 0.6s infinite;
-}
-.loader-dots div:nth-child(3) {
-  left: 32px;
-  animation: loader-dots2 0.6s infinite;
-}
-.loader-dots div:nth-child(4) {
-  left: 56px;
-  animation: loader-dots3 0.6s infinite;
-}
-@keyframes loader-dots1 {
+
+@keyframes loader {
   0% {
-    transform: scale(0);
+    transform: rotate(0deg);
   }
+
+  25% {
+    transform: rotate(180deg);
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  75% {
+    transform: rotate(360deg);
+  }
+
   100% {
-    transform: scale(1);
+    transform: rotate(360deg);
   }
 }
-@keyframes loader-dots3 {
+
+@keyframes loader-inner {
   0% {
-    transform: scale(1);
+    height: 0%;
   }
+
+  25% {
+    height: 0%;
+  }
+
+  50% {
+    height: 100%;
+  }
+
+  75% {
+    height: 100%;
+  }
+
   100% {
-    transform: scale(0);
-  }
-}
-@keyframes loader-dots2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
+    height: 0%;
   }
 }
 </style>
