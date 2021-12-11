@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      user: new Auth("mail@evren.dev", "P@s5w0rd.123"),
+      user: new Auth(),
       loading: false,
       backendError: {
         error: false,
@@ -67,7 +67,7 @@ export default {
   .d-table-cell.align-middle
     .card
       .card-body
-        h1.h2.text-center Giriş Yapın
+        h1.h2.text-center {{ $t("account.login.title") }}
         .m-sm-4
           .alert.alert-warning(v-if="backendError.error"
             role="alert")
@@ -77,31 +77,31 @@ export default {
             v-else
             @submit.prevent="submitLogin")
             .mb-3
-              label.form-label Eposta
+              label.form-label {{ $t("account.login.email") }}
               input.form-control.form-control-lg(type="email" 
                 name="email"
                 autocomplete="email"
                 :class="errors.has('email') ? 'is-invalid' : 'is-valid'"
                 :disabled="loading"
-                placeholder="Enter your email"
+                :placeholder='$t("account.login.email_placeholder")'
                 v-model="user.email"
-                v-validate="'required'")
+                v-validate="'required|email'")
               .valid-feedback(v-if="errors.has('email')") {{ errors.email }}
             .mb-3
-              label.form-label Parola
+              label.form-label {{ $t("account.login.password") }}
               input.form-control.form-control-lg(type="password" 
                 name="password" 
-                autocomplete="current-password"
-                placeholder="Enter your password"
+                autocomplete="password"
                 :class="errors.has('password') ? 'is-invalid' : 'is-valid'"
-                :disabled="'loading'"
+                :disabled="loading"
+                :placeholder='$t("account.login.password_placeholder")'
                 v-model="user.password"
-                v-validate="'required|min:4|max:16'")
+                v-validate="'required|min:8'")
               .valid-feedback(v-if="errors.has('password')") {{ errors.password }}
               small
-                router-link(to="/account/forgot-password") Parolamı Unuttum
+                router-link(to="/account/forgot-password") {{ $t("account.login.forgot_password") }}
             .text-center.mt-3
-              button.btn.btn-lg.btn-primary(type="submit") Giriş Yap
+              button.btn.btn-lg.btn-primary(type="submit") {{ $t("account.login.submit") }}
 </template>
 
 <style lang="postcss" scoped></style>

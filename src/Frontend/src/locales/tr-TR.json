@@ -1,6 +1,14 @@
 {
-  "app": {
-    "title": "Evren.Dev Web Uygulaması"
+  "account": {
+    "login": {
+      "title": "Giriş Yapın",
+      "email": "Eposta",
+      "email_placeholder": "Eposta adresinizi girin",
+      "password": "Parola",
+      "password_placeholder": "Parolanızı girin",
+      "forgot_password": "Parolamı Unuttum",
+      "submit": "Giriş Yap"
+    }
   },
   "message": "Merhaba"
 }
