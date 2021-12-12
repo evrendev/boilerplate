@@ -5,14 +5,6 @@ export default {
   name: "Home",
   components: {
     LangDropdown
-  },
-  metaInfo: {
-    title: "Evren.Dev",
-    titleTemplate: "%s - Web Application",
-    htmlAttrs: {
-      lang: "tr",
-      amp: false
-    }
   }
 }
 </script>

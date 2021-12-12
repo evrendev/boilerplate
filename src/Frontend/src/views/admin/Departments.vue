@@ -15,14 +15,6 @@ export default {
   name: "Departments",
   components: {
     card
-  },
-  metaInfo: {
-    title: "Departman Yönetimi",
-    titleTemplate: "%s | Evren.Dev",
-    htmlAttrs: {
-      lang: "tr",
-      amp: false
-    }
   }
 }
 </script>

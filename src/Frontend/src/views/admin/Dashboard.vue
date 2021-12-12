@@ -15,14 +15,6 @@ export default {
   name: "Dashboard",
   components: {
     card
-  },
-  metaInfo: {
-    title: "Kontrol Paneli",
-    titleTemplate: "%s | Evren.Dev",
-    htmlAttrs: {
-      lang: "tr",
-      amp: false
-    }
   }
 }
 </script>

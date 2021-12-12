@@ -4,16 +4,11 @@ import router from "./routes"
 import store from "./store"
 import "./registerServiceWorker"
 
-import VueMeta from "vue-meta"
 import VeeValidate from "vee-validate"
 
 import i18n from "./locales/i18n"
 
 Vue.config.productionTip = false
-
-Vue.use(VueMeta, {
-  refreshOnceOnNavigation: true
-})
 
 Vue.use(VeeValidate)
 

@@ -8,13 +8,6 @@ export default {
   components: {
     Loader
   },
-  metaInfo: {
-    title: "Giriş Yapın",
-    htmlAttrs: {
-      lang: "tr",
-      amp: false
-    }
-  },
   data() {
     return {
       user: new Auth(),
