@@ -2,13 +2,12 @@ version: "3.9"
 
 services:
   sql-server:
-      image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+      image: mcr.microsoft.com/azure-sql-edge
       ports:
         - "1434:1433"
       environment:
-        SA_PASSWORD: P@ssw0rd.123
         ACCEPT_EULA: Y
-        MSSQL_PID: Express
+        SA_PASSWORD: P@ssw0rd.123
       networks:
         - webnet
   evrendev:
