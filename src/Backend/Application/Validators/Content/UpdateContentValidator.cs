@@ -1,9 +1,9 @@
-﻿using FluentValidation;
-using EvrenDev.Application.DTOS.Content;
-using System;
+﻿using EvrenDev.Application.DTOS.Content;
 using EvrenDev.Application.Enums.Language;
+using FluentValidation;
+using System;
 
-namespace EvrenDev.Api.Validators.Settings.Content
+namespace EvrenDev.Application.Validators.Content
 {
     public class UpdateContentValidator : AbstractValidator<UpdateContentCommand>
     {

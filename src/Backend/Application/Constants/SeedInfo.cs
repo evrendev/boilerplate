@@ -10,11 +10,11 @@
         public const string LASTNAME = "User"; 
     }
 
-    public class SeedEditorialDepartmentUserInfo
+    public class SeedModeratorialDepartmentUserInfo
     {
         public const string DEFAULT_PASSWORD = "P@ssw0rd.123";
-        public const string USERNAME = "editor@evren.dev";
-        public const string EMAIL = "editor@evren.dev";
+        public const string USERNAME = "moderator@evren.dev";
+        public const string EMAIL = "moderator@evren.dev";
         public const string FIRSTNAME = "Edit";
         public const string LASTNAME = "User"; 
     }
@@ -38,23 +38,23 @@
         public const string LASTNAME = "Yeniev";
     }
 
-    public class SeedAdminisrationDepartmentInfo
+    public class SeedAdminUsersDepartmentInfo
     {
-        public const string DEFAULT_TITLE = "Administration Department";
+        public const string DEFAULT_TITLE = "Admin Users Department";
     }
 
-    public class SeedEditorialDepartmentInfo
+    public class SeedModeratorUsersDepartmentInfo
     {
-        public const string DEFAULT_TITLE = "Editorial Department";
+        public const string DEFAULT_TITLE = "Moderator Users Department";
     }
 
-    public class SeedBasicUserDepartmentInfo
+    public class SeedBasicUsersDepartmentInfo
     {
-        public const string DEFAULT_TITLE = "Basic User Department";
+        public const string DEFAULT_TITLE = "Basic Users Department";
     }
 
-    public class SeedSoftwareDepartmentInfo
+    public class SeedSuperUsersDepartmentInfo
     {
-        public const string DEFAULT_TITLE = "Software Department";
+        public const string DEFAULT_TITLE = "Super Users Department";
     }
 }

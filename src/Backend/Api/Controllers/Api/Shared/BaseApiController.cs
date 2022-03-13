@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace EvrenDev.Controllers.Api.Shared
 {
     [ApiController]
-    [AuthorizeRoles(RoleNames.ADMINISTRATOR,RoleNames.SUPER_USER,RoleNames.EDITOR)]
+    [AuthorizeRoles(RoleNames.ADMINISTRATOR,RoleNames.SUPER_USER,RoleNames.MODERATOR)]
     [Route("api/v{version:apiVersion}/[controller]")]
     public abstract class BaseApiController<T> : Controller
     {

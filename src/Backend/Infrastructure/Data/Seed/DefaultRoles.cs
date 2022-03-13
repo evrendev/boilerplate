@@ -1,5 +1,5 @@
 ﻿using EvrenDev.Application.Enums.Identity;
-using EvrenDev.Domain.Entities;
+using EvrenDev.Infrastructure.Model;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 

@@ -4,7 +4,6 @@ using EvrenDev.Application.Exceptions;
 using EvrenDev.Application.Interfaces;
 using EvrenDev.Application.Interfaces.Shared;
 using EvrenDev.Application.SharedPreferences;
-using EvrenDev.Domain.Entities;
 using EvrenDev.Application.Interfaces.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -20,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Extensions.Localization;
+using EvrenDev.Infrastructure.Model;
 
 namespace EvrenDev.Infrastructure.Identity.Services
 {

@@ -1,4 +1,4 @@
-﻿using EvrenDev.Domain.Entities;
+﻿using EvrenDev.Infrastructure.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

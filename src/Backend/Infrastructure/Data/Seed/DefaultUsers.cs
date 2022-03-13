@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using EvrenDev.Application.Enums.Identity;
+using EvrenDev.Infrastructure.Model;
 
 namespace EvrenDev.Infrastructure.Identity.Seeds
 {
@@ -13,22 +14,16 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
     {
         public static async Task SeedAsync(UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager,
-            List<Department> departments,
             ILoggerFactory loggerFactory)
         {
             var log = loggerFactory.CreateLogger<DefaultUsers>();
-
-            var managementDepartmentId = departments.FirstOrDefault(d => string.Equals(d.Title, SeedAdminisrationDepartmentInfo.DEFAULT_TITLE)).Id;
-            var financeDepartmentId = departments.FirstOrDefault(d => string.Equals(d.Title, SeedEditorialDepartmentInfo.DEFAULT_TITLE)).Id;
-            var basicUserDepartmentId = departments.FirstOrDefault(d => string.Equals(d.Title, SeedBasicUserDepartmentInfo.DEFAULT_TITLE)).Id;
             
-            var editorialDepartmentUser = new ApplicationUser
+            var moderatorialDepartmentUser = new ApplicationUser
             {
-                UserName = SeedEditorialDepartmentUserInfo.USERNAME,
-                Email = SeedEditorialDepartmentUserInfo.EMAIL,
-                FirstName = SeedEditorialDepartmentUserInfo.FIRSTNAME,
-                LastName = SeedEditorialDepartmentUserInfo.LASTNAME,
-                DepartmentId = financeDepartmentId,
+                UserName = SeedModeratorialDepartmentUserInfo.USERNAME,
+                Email = SeedModeratorialDepartmentUserInfo.EMAIL,
+                FirstName = SeedModeratorialDepartmentUserInfo.FIRSTNAME,
+                LastName = SeedModeratorialDepartmentUserInfo.LASTNAME,
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 LockoutEnabled = true,
@@ -41,7 +36,6 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 Email = SeedBasicUserDepartmentUserInfo.EMAIL,
                 FirstName = SeedBasicUserDepartmentUserInfo.FIRSTNAME,
                 LastName = SeedBasicUserDepartmentUserInfo.LASTNAME,
-                DepartmentId = basicUserDepartmentId,
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 LockoutEnabled = true,
@@ -54,7 +48,6 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 Email = SeedAdministrationDepartmentUserInfo.EMAIL,
                 FirstName = SeedAdministrationDepartmentUserInfo.FIRSTNAME,
                 LastName = SeedAdministrationDepartmentUserInfo.LASTNAME,
-                DepartmentId = managementDepartmentId,
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 LockoutEnabled = true,
@@ -62,7 +55,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             };
 
             var basicUser = await userManager.FindByEmailAsync(basicDepartmentUser.Email);
-            var editorUser = await userManager.FindByEmailAsync(editorialDepartmentUser.Email);
+            var moderatorUser = await userManager.FindByEmailAsync(moderatorialDepartmentUser.Email);
             var adminUser = await userManager.FindByEmailAsync(administationDepartmentUser.Email);
             
             if (basicUser == null)
@@ -70,15 +63,15 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 await userManager.CreateAsync(basicDepartmentUser, SeedBasicUserDepartmentUserInfo.DEFAULT_PASSWORD);
                 await userManager.AddToRoleAsync(basicDepartmentUser, UserRoles.BasicUser.Name);
                     
-                log.LogInformation("Editor is created successfuly");
+                log.LogInformation("Basic user is created successfuly");
             }
             
-            if (editorUser == null)
+            if (moderatorUser == null)
             {
-                await userManager.CreateAsync(editorialDepartmentUser, SeedEditorialDepartmentUserInfo.DEFAULT_PASSWORD);
-                await userManager.AddToRoleAsync(editorialDepartmentUser, UserRoles.Editor.Name);
+                await userManager.CreateAsync(moderatorialDepartmentUser, SeedModeratorialDepartmentUserInfo.DEFAULT_PASSWORD);
+                await userManager.AddToRoleAsync(moderatorialDepartmentUser, UserRoles.Moderator.Name);
                     
-                log.LogInformation("Editor is created successfuly");
+                log.LogInformation("Moderator user is created successfuly");
             }
 
             if (adminUser == null)
@@ -86,7 +79,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 await userManager.CreateAsync(administationDepartmentUser, SeedAdministrationDepartmentUserInfo.DEFAULT_PASSWORD);
                 await userManager.AddToRoleAsync(administationDepartmentUser, UserRoles.Administrator.Name);
                     
-                log.LogInformation("Administrator is created successfuly");
+                log.LogInformation("Admin user is created successfuly");
             }
 
             if(adminUser != null) {
@@ -99,18 +92,18 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 
                 await roleManager.SeedClaimsForRole(UserRoles.Administrator.Name, modules);
                     
-                log.LogInformation("Administration department user permission is created successfuly");
+                log.LogInformation("Admin user permission is created successfuly");
             }
 
-            if(editorUser != null) {
+            if(moderatorUser != null) {
                 var modules = new string[] { 
                     "Dashboard",
                     "Content"
                 };
                 
-                await roleManager.SeedClaimsForRole(UserRoles.Editor.Name, modules);
+                await roleManager.SeedClaimsForRole(UserRoles.Moderator.Name, modules);
                     
-                log.LogInformation("Editorial department user permission is created successfuly");
+                log.LogInformation("Moderator user permission is created successfuly");
             }
 
             if(basicUser != null) {

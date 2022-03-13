@@ -3,7 +3,7 @@ using EvrenDev.Application.DTOS.Content;
 using System;
 using EvrenDev.Application.Enums.Language;
 
-namespace EvrenDev.Api.Validators.Settings.Content
+namespace EvrenDev.Application.Validators.Content
 {
     public class CreateContentValidator : AbstractValidator<CreateContentCommand>
     {

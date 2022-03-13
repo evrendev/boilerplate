@@ -2,7 +2,7 @@
 using FluentValidation;
 using System;
 
-namespace EvrenDev.Api.Validators.Settings.Content
+namespace EvrenDev.Application.Validators.Token
 {
     public class TokenRequestValidator : AbstractValidator<TokenRequest>
     {

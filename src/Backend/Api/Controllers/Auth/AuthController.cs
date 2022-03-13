@@ -17,38 +17,41 @@ namespace EvrenDev.Controllers.Auth
             this._identityService = identityService;
         }
 
-        /// <summary>
-        /// Generates a JSON Web Token for a valid combination of emailId and password.
-        /// </summary>
-        /// <param name="tokenRequest"></param>
-        /// <returns></returns>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetTokenAsync(TokenRequest tokenRequest)
+        public async Task<IActionResult> GetTokenAsync(TokenRequest request)
         {
             var ipAddress = GenerateIPAddress();
-            var token = await _identityService.GetTokenAsync(tokenRequest, ipAddress);
+            var token = await _identityService.GetTokenAsync(request, ipAddress);
 
             return Ok(token);
         }
 
         [HttpPost("forgot-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest model)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
         {
             var url = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
-            var result = await _identityService.ForgotPassword(model, Request.Headers["origin"], url);
+            var result = await _identityService.ForgotPassword(request, Request.Headers["origin"], url);
             
             return Ok(result);
         }
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
-            var result = await _identityService.ResetPassword(model);
+            var result = await _identityService.ResetPassword(request);
             return Ok(result);
         }
+
+        // [HttpPost("refreshtoken")]
+        // [AllowAnonymous]
+        // public async Task<IActionResult> RefreshToken(RefreshToken request)
+        // {
+        //     var result = await _identityService.ResetPassword(request);
+        //     return Ok(result);
+        // }
 
         private string GenerateIPAddress()
         {

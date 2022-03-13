@@ -1,9 +1,7 @@
 ﻿using Loggly;
 using Loggly.Config;
 using EvrenDev.Application.Settings;
-using EvrenDev.Domain.Entities;
 using EvrenDev.Infrastructure;
-using EvrenDev.Infrastructure.Data.Seed;
 using EvrenDev.Infrastructure.Identity.Seeds;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +14,7 @@ using Serilog;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using EvrenDev.Infrastructure.Model;
 
 namespace EvrenDev.Api
 {
@@ -53,14 +52,13 @@ namespace EvrenDev.Api
                 try
                 {
                     var dbContext = services.GetService<ApplicationDbContext>();
-                    var departments = await DefaultDepartments.SeedAsync(dbContext, loggerFactory);
 
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
 
                     await DefaultRoles.SeedAsync(roleManager);
-                    await DefaultUsers.SeedAsync(userManager, roleManager, departments, loggerFactory);
-                    await DefaultSuperAdminUser.SeedAsync(userManager, roleManager, departments, loggerFactory);
+                    await DefaultUsers.SeedAsync(userManager, roleManager, loggerFactory);
+                    await DefaultSuperAdminUser.SeedAsync(userManager, roleManager, loggerFactory);
                 }
                 catch (Exception ex)
                 {

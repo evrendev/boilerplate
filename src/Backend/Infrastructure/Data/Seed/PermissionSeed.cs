@@ -1,5 +1,5 @@
 using EvrenDev.Application.Constants;
-using EvrenDev.Domain.Entities;
+using EvrenDev.Infrastructure.Model;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Security.Claims;

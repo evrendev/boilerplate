@@ -1,11 +1,9 @@
 ﻿using EvrenDev.Application.Constants;
-using EvrenDev.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using EvrenDev.Application.Enums.Identity;
+using EvrenDev.Infrastructure.Model;
 
 namespace EvrenDev.Infrastructure.Identity.Seeds
 {
@@ -13,11 +11,9 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
     {
         public static async Task SeedAsync(UserManager<ApplicationUser> userManager, 
             RoleManager<ApplicationRole> roleManager,
-            List<Department> departments,
             ILoggerFactory loggerFactory)
         {
             var log = loggerFactory.CreateLogger<DefaultUsers>();
-            var departmentId = departments.FirstOrDefault(d => string.Equals(d.Title, SeedSoftwareDepartmentInfo.DEFAULT_TITLE)).Id;
 
             var superUser = new ApplicationUser
             {
@@ -25,7 +21,6 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 Email = SeedSuperAdminInfo.EMAIL,
                 FirstName = SeedSuperAdminInfo.FIRSTNAME,
                 LastName = SeedSuperAdminInfo.LASTNAME,
-                DepartmentId = departmentId,
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 LockoutEnabled = true,

@@ -19,7 +19,6 @@ namespace EvrenDev.Infrastructure.Extensions
 
             services
                 .AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>))
-                .AddScoped<IDepartmentRepository, DepartmentRepository>()
                 .AddScoped<IContentRepository, ContentRepository>();
 
             #endregion Repositories

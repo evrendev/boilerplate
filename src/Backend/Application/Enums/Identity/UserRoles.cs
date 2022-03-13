@@ -7,48 +7,41 @@ namespace EvrenDev.Application.Enums.Identity
     public class UserRoles
     {
         public static UserRoles SuperUser { get; } = new UserRoles(name: RoleNames.SUPER_USER, 
-            label: "Süper Yönetici", 
-            level: 20,
+            label: "Super Admin", 
             favorite: false
         );
 
         public static UserRoles Administrator { get; } = new UserRoles(name: RoleNames.ADMINISTRATOR, 
-            label: "Yönetici", 
-            level: 10,
+            label: "Administrator", 
             favorite: false
         );
 
-        public static UserRoles Editor { get; } = new UserRoles(name: RoleNames.EDITOR, 
-            label: "Editör", 
-            level: 5,
+        public static UserRoles Moderator { get; } = new UserRoles(name: RoleNames.MODERATOR, 
+            label: "Moderator", 
             favorite: false
         );
 
         public static UserRoles BasicUser { get; } = new UserRoles(name: RoleNames.BASIC_USER, 
-            label: "Kullanıcı", 
-            level: 1,
+            label: "Kullanıcı",
             favorite: true
         );
 
         public string Label { get; set; }
         public string Name { get; set; }
-        public int Level { get; set; }
         public bool Favorite { get; set; }
 
         public UserRoles(string name, 
             string label,
-            int level,
             bool favorite)
         {
             Name = name;
             Label = label;
-            Level = level;
             Favorite = favorite;
         }
 
         public static IEnumerable<UserRoles> List()
         {
-            return new[] { SuperUser, Administrator, Editor, BasicUser };
+            return new[] { SuperUser, Administrator, Moderator, BasicUser };
         }
 
         public static UserRoles FromRoleName(string roleName)
@@ -59,11 +52,6 @@ namespace EvrenDev.Application.Enums.Identity
             }
 
             return List().Single(role => role.Name == roleName);
-        }
-
-        public static IEnumerable<UserRoles> FromLevel(int level)
-        {
-            return List().Where(role => role.Level <= level).ToList();
         }
     }
 }

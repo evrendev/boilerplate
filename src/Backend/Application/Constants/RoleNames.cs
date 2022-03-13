@@ -5,7 +5,7 @@
     {
         public const string SUPER_USER = "SuperUser";
         public const string ADMINISTRATOR = "Administrator";
-        public const string EDITOR = "Editor";
+        public const string MODERATOR = "Moderator";
         public const string BASIC_USER = "BasicUser";
     }
 }

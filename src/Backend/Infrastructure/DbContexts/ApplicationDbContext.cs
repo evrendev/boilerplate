@@ -10,6 +10,7 @@ using System.Linq;
 using EvrenDev.Domain.Shared;
 using EvrenDev.Application.Interfaces.Shared;
 using Microsoft.AspNetCore.Http;
+using EvrenDev.Infrastructure.Model;
 
 namespace EvrenDev.Infrastructure
 {
@@ -30,7 +31,6 @@ namespace EvrenDev.Infrastructure
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public DbSet<Department> Departments { get; set; }
         public DbSet<Content> Contents { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
