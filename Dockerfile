@@ -9,12 +9,12 @@ COPY *.sln .
 WORKDIR /src/
 COPY src/. ./
 #
-RUN dotnet build "./Backend/Api/Api.csproj" -c Release -o /app/build
+RUN dotnet build "./Backend/PublicApi/PublicApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "./Backend/Api/Api.csproj" -c Release -o /app/publish
+RUN dotnet publish "./Backend/PublicApi/PublicApi.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Api.dll"]
+ENTRYPOINT ["dotnet", "PublicApi.dll"]

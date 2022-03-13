@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Backend/Api/bin/Debug/net5.0/Api.dll",
+            "program": "${workspaceFolder}/src/Backend/PublicApi/bin/Debug/net5.0/PublicApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/Backend/Api",
+            "cwd": "${workspaceFolder}/src/Backend/PublicApi",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
