@@ -257,5 +257,12 @@ paket-files/
 # Logs
 logs/
 
-appsettings.Development.json
-.DS_Store
+# Project folders
+
+publish/
+**/wwwroot/
+
+# VS Code files for those working on multiple tools
+.vscode/*
+
+**/.DS_Store
