@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using EvrenDev.Application.Constants;
@@ -7,57 +6,64 @@ namespace EvrenDev.Application.Enums.Identity
 {
     public class UserRoles
     {
-        public static UserRoles SuperUser { get; } = new UserRoles(val: RoleNames.SUPER_USER, 
-            text: "Süper Yönetici", 
-            level: 20
+        public static UserRoles SuperUser { get; } = new UserRoles(name: RoleNames.SUPER_USER, 
+            label: "Süper Yönetici", 
+            level: 20,
+            favorite: false
         );
 
-        public static UserRoles Administrator { get; } = new UserRoles(val: RoleNames.ADMINISTRATOR, 
-            text: "Yönetici", 
-            level: 10
+        public static UserRoles Administrator { get; } = new UserRoles(name: RoleNames.ADMINISTRATOR, 
+            label: "Yönetici", 
+            level: 10,
+            favorite: false
         );
 
-        public static UserRoles Editor { get; } = new UserRoles(val: RoleNames.EDITOR, 
-            text: "Editör", 
-            level: 5
+        public static UserRoles Editor { get; } = new UserRoles(name: RoleNames.EDITOR, 
+            label: "Editör", 
+            level: 5,
+            favorite: false
         );
 
-        public static UserRoles BasicUser { get; } = new UserRoles(val: RoleNames.BASIC_USER, 
-            text: "Kullanıcı", 
-            level: 1
+        public static UserRoles BasicUser { get; } = new UserRoles(name: RoleNames.BASIC_USER, 
+            label: "Kullanıcı", 
+            level: 1,
+            favorite: true
         );
 
-        public string Text { get; set; }
-        public string Value { get; set; }
+        public string Label { get; set; }
+        public string Name { get; set; }
         public int Level { get; set; }
+        public bool Favorite { get; set; }
 
-        public UserRoles(string val, 
-            string text,
-            int level)
+        public UserRoles(string name, 
+            string label,
+            int level,
+            bool favorite)
         {
-            Value = val;
-            Text = text;
+            Name = name;
+            Label = label;
             Level = level;
+            Favorite = favorite;
         }
 
         public static IEnumerable<UserRoles> List()
         {
-            return new[] { SuperUser, Administrator, Editor, BasicUser};
+            return new[] { SuperUser, Administrator, Editor, BasicUser };
         }
 
-        public static UserRoles FromString(string roleString)
+        public static UserRoles FromRoleName(string roleName)
         {
-            return List().Single(r => string.Equals(r.Text, roleString, StringComparison.OrdinalIgnoreCase));
-        }
+            if(!List().Any(role => string.Equals(role.Name, roleName)))
+            {
+                return List().FirstOrDefault(role => role.Favorite);
+            }
 
-        public static UserRoles FromValue(string value)
-        {
-            return List().Single(r => r.Value == value);
+            return List().Single(role => role.Name == roleName);
         }
 
         public static IEnumerable<UserRoles> FromLevel(int level)
         {
-            return List().Where(role => role.Level >= level).ToList();
+            return List().Where(role => role.Level <= level).ToList();
         }
     }
 }

@@ -34,8 +34,7 @@ namespace EvrenDev.Controllers.Api
 
 
             await using var sqlTransaction = connection.BeginTransaction();
-            var commandText = $@"SELECT Id, {column} FROM {table}
-                                        WHERE {column} LIKE N'%{HttpUtility.UrlDecode(query)}%';";
+            var commandText = $@"SELECT Id, {column} FROM {table} WHERE {column} LIKE N'%{HttpUtility.UrlDecode(query)}%';";
 
             await using var command = new SqlCommand(commandText, connection, sqlTransaction);
 

@@ -68,7 +68,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             if (basicUser == null)
             {
                 await userManager.CreateAsync(basicDepartmentUser, SeedBasicUserDepartmentUserInfo.DEFAULT_PASSWORD);
-                await userManager.AddToRoleAsync(basicDepartmentUser, UserRoles.BasicUser.Value);
+                await userManager.AddToRoleAsync(basicDepartmentUser, UserRoles.BasicUser.Name);
                     
                 log.LogInformation("Editor is created successfuly");
             }
@@ -76,7 +76,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             if (editorUser == null)
             {
                 await userManager.CreateAsync(editorialDepartmentUser, SeedEditorialDepartmentUserInfo.DEFAULT_PASSWORD);
-                await userManager.AddToRoleAsync(editorialDepartmentUser, UserRoles.Editor.Value);
+                await userManager.AddToRoleAsync(editorialDepartmentUser, UserRoles.Editor.Name);
                     
                 log.LogInformation("Editor is created successfuly");
             }
@@ -84,7 +84,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             if (adminUser == null)
             {
                 await userManager.CreateAsync(administationDepartmentUser, SeedAdministrationDepartmentUserInfo.DEFAULT_PASSWORD);
-                await userManager.AddToRoleAsync(administationDepartmentUser, UserRoles.Administrator.Value);
+                await userManager.AddToRoleAsync(administationDepartmentUser, UserRoles.Administrator.Name);
                     
                 log.LogInformation("Administrator is created successfuly");
             }
@@ -97,7 +97,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                     "Content"
                 };
                 
-                await roleManager.SeedClaimsForRole(UserRoles.Administrator.Value, modules);
+                await roleManager.SeedClaimsForRole(UserRoles.Administrator.Name, modules);
                     
                 log.LogInformation("Administration department user permission is created successfuly");
             }
@@ -108,7 +108,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                     "Content"
                 };
                 
-                await roleManager.SeedClaimsForRole(UserRoles.Editor.Value, modules);
+                await roleManager.SeedClaimsForRole(UserRoles.Editor.Name, modules);
                     
                 log.LogInformation("Editorial department user permission is created successfuly");
             }
@@ -116,7 +116,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             if(basicUser != null) {
                 var modules = new string[] { };
                 
-                await roleManager.SeedClaimsForRole(UserRoles.BasicUser.Value, modules);
+                await roleManager.SeedClaimsForRole(UserRoles.BasicUser.Name, modules);
                     
                 log.LogInformation("Basic user permission is created successfuly");
             }

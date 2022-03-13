@@ -44,7 +44,7 @@ namespace EvrenDev.Infrastructure.Data.Config
             entity.Property(e => e.LanguageId)
                 .IsRequired(true)
                 .HasMaxLength(1)
-                .HasDefaultValue(Languages.Turkish.Value);
+                .HasDefaultValue(Languages.Turkish.Id);
 
             entity.Property(e => e.MetaTitle)
                 .IsRequired(false)

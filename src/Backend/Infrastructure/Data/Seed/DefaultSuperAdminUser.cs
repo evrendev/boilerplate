@@ -39,7 +39,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             if (user == null)
             {
                 await userManager.CreateAsync(superUser, SeedSuperAdminInfo.DEFAULT_PASSWORD);
-                await userManager.AddToRoleAsync(superUser, UserRoles.SuperUser.Value);
+                await userManager.AddToRoleAsync(superUser, UserRoles.SuperUser.Name);
                 
                 log.LogInformation("Super Admin user assigned all roles successfuly");
             }
@@ -51,7 +51,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
                 "Content"
             };
             
-            await roleManager.SeedClaimsForRole(UserRoles.SuperUser.Value, modules);
+            await roleManager.SeedClaimsForRole(UserRoles.SuperUser.Name, modules);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace EvrenDev.Api.Validators.Settings.Content
             RuleFor(d => d.LanguageId)
                 .NotEmpty().WithMessage("Dil boş bırakılamaz.")
                 .NotNull()
-                .Must(language => language == Languages.Turkish.Value || language == Languages.English.Value).WithMessage("Dil Türkçe veya İngilizce seçilmelidir.");
+                .Must(language => language == Languages.Turkish.Id || language == Languages.English.Id).WithMessage("Dil Türkçe veya İngilizce seçilmelidir.");
 
             RuleFor(d => d.Title)
                 .NotEmpty().WithMessage("Başlık alanını girmeniz gerekiyor.")

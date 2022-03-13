@@ -12,7 +12,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             foreach (var userRole in UserRoles.List())
             {
                 await roleManager.CreateAsync(new ApplicationRole(){
-                    Name = userRole.Value
+                    Name = userRole.Name
                 });
             }
         }

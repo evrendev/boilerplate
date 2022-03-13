@@ -57,7 +57,8 @@ namespace EvrenDev.Controllers.Api
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(Guid id, UpdateApplicationUserCommand command)
+        public async Task<IActionResult> Update(Guid id, 
+            UpdateApplicationUserCommand command)
         {
             if (id != command.Id)
             {

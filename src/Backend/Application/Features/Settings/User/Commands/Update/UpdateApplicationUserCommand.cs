@@ -33,6 +33,7 @@ namespace EvrenDev.Application.Features.Settings.User.Commands.Update
                 return Result<Guid>.Fail($"Kullanıcı bulunamadı. Id: {command.Id}");
             }
 
+            user.DepartmentId = command.DepartmentId;
             user.FirstName = command.FirstName;
             user.LastName = command.LastName;
             user.Email = command.Email;

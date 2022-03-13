@@ -15,7 +15,7 @@ namespace EvrenDev.Application.MappingProfile
             CreateMap<Content, ContentDto>()
                 .ForMember(contentDto =>  contentDto.Language, 
                     expression => expression.MapFrom(
-                        content => Languages.FromValue(content.LanguageId)))
+                        content => Languages.FromId(content.LanguageId)))
                 .ForMember(contentDto =>  contentDto.MenuPositions, 
                     expression => expression.MapFrom(content => content.MenuPosition.Select(mp => MenuPositions.FromValue(mp))))
                 .ForMember(contentDto => contentDto.Image, 
@@ -41,7 +41,7 @@ namespace EvrenDev.Application.MappingProfile
             CreateMap<Content, ContentBasicDto>()
                 .ForMember(contentDto =>  contentDto.Language, 
                     expression => expression.MapFrom(
-                        content => Languages.FromValue(content.LanguageId)))
+                        content => Languages.FromId(content.LanguageId)))
                 .ForMember(contentDto => contentDto.Image, 
                     expression => expression.MapFrom(
                         content => ImageFunctions.Get("contents", content.Image)));
