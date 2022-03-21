@@ -40,9 +40,7 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             }
 
             var modules = new string[] { 
-                "Dashboard", 
-                "Settings.Department", 
-                "Settings.User",
+                "Dashboard",
                 "Content"
             };
             

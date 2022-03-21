@@ -82,8 +82,6 @@ namespace EvrenDev.Infrastructure.Identity.Seeds
             if(adminUser != null) {
                 var modules = new string[] { 
                     "Dashboard", 
-                    "Settings.Department", 
-                    "Settings.User",
                     "Content"
                 };
                 
