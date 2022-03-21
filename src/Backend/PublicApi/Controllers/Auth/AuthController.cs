@@ -36,9 +36,12 @@ namespace EvrenDev.PublicApi.Controllers.Auth
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
         {
             var url = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
-            var result = await _identityService.ForgotPassword(request, Request.Headers["origin"], url);
+            var response = await _identityService.ForgotPassword(request, Request.Headers["origin"], url);
+
+            if(response.Error)
+                return NotFound(response);
             
-            return Ok(result);
+            return Ok(response);
         }
 
         [HttpPost("reset-password")]
