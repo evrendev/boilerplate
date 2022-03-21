@@ -2,6 +2,7 @@
 using EvrenDev.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EvrenDev.PublicApi.Controllers.Auth
@@ -19,12 +20,15 @@ namespace EvrenDev.PublicApi.Controllers.Auth
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetTokenAsync(TokenRequest request)
+        public async Task<IActionResult> GetToken(TokenRequest request)
         {
             var ipAddress = GenerateIPAddress();
-            var token = await _identityService.GetTokenAsync(request, ipAddress);
+            var response = await _identityService.GetTokenAsync(request, ipAddress);
 
-            return Ok(token);
+            if(response.Error)
+                return Unauthorized(response);
+
+            return Ok(response);
         }
 
         [HttpPost("forgot-password")]
@@ -41,17 +45,39 @@ namespace EvrenDev.PublicApi.Controllers.Auth
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
-            var result = await _identityService.ResetPassword(request);
-            return Ok(result);
+            var response = await _identityService.ResetPassword(request);
+
+            if(response.Error)
+                return NotFound(response);
+
+            return Ok(response);
         }
 
-        // [HttpPost("refreshtoken")]
-        // [AllowAnonymous]
-        // public async Task<IActionResult> RefreshToken(RefreshToken request)
-        // {
-        //     var result = await _identityService.ResetPassword(request);
-        //     return Ok(result);
-        // }
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequest request)
+        {
+            var ipAddress = GenerateIPAddress();
+            var response = await _identityService.RefreshTokenAsync(request, ipAddress);
+
+            if(response.Error)
+                return Unauthorized(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("revoke")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RevokeTokenAsync(RevokeTokenRequest request)
+        {
+            var ipAddress = GenerateIPAddress();
+            var response = await _identityService.RevokeTokenAsync(request, ipAddress);
+
+            if(response.Error)
+                return Unauthorized(response);
+
+            return Ok(response);
+        }
 
         private string GenerateIPAddress()
         {

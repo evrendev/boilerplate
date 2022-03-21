@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EvrenDev.Infrastructure.Identity.Model
 {
@@ -13,16 +14,22 @@ namespace EvrenDev.Infrastructure.Identity.Model
 
         public string LastName { get; set; }
 
+        public string FullName => $"{FirstName} {LastName}";
+
         public string JobDescription { get; set; }
 
         public bool Deleted { get; set; }
         
-        public List<RefreshToken> RefreshTokens { get; set; }
+        public virtual List<IdentityRefreshToken> RefreshTokens { get; set; } = new List<IdentityRefreshToken>();
 
-        public bool OwnsToken(string token)
+        public bool HasValidRefreshToken(string token)
         {
-            return this.RefreshTokens?.Find(x => x.Token == token) != null;
+            return this.RefreshTokens.Any(rt => string.Equals(rt.Token, token) && !rt.IsExpired);
         }
-        
+
+        public IdentityRefreshToken GetRefreshToken(string token)
+        {
+            return this.RefreshTokens.Single(rt => string.Equals(rt.Token, token) && !rt.IsExpired);
+        }
     }
 }

@@ -12,18 +12,14 @@ namespace EvrenDev.Infrastructure.Identity.MappingProfile
             //User Mapping
             CreateMap<ApplicationUser, BasicApplicationUserDto>()
                 .ForMember(user => user.Roles,
-                    expression => expression.MapFrom(user => user.UserRoles.Select(r => r.Role.Name)))
-                .ForMember(user => user.FullName,
-                    expression => expression.MapFrom(user => $"{user.FirstName} {user.LastName}"));
+                    expression => expression.MapFrom(user => user.UserRoles.Select(r => r.Role.Name)));
 
             //User Mapping
             CreateMap<ApplicationUser, ApplicationUserDto>()
                 .ForMember(user => user.Roles,
                     expression => expression.MapFrom(user => user.UserRoles.Select(r => r.Role.Name)))
                 .ForMember(user => user.Phone,
-                    expression => expression.MapFrom(user => $"{user.PhoneNumber:(###) ###-####}"))
-                .ForMember(user => user.FullName,
-                    expression => expression.MapFrom(user => $"{user.FirstName} {user.LastName}"));
+                    expression => expression.MapFrom(user => $"{user.PhoneNumber:(###) ###-####}"));
 
             CreateMap<CreateApplicationUserCommand, ApplicationUser>()
                 .ForMember(user => user.UserName, expression => expression.MapFrom(user => user.Email))

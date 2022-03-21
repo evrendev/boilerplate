@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using EvrenDev.Application.DTOS.AutoComplete;
 
 namespace EvrenDev.PublicApi.Controllers.Api
@@ -24,9 +22,7 @@ namespace EvrenDev.PublicApi.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] string table, 
-            string column, 
-            string query)
+        public async Task<IActionResult> Index(AutoCompleteRequest request)
         {
             var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationConnection");
             await using var connection = new SqlConnection(connectionString);
@@ -34,7 +30,18 @@ namespace EvrenDev.PublicApi.Controllers.Api
 
 
             await using var sqlTransaction = connection.BeginTransaction();
-            var commandText = $@"SELECT Id, {column} FROM {table} WHERE {column} LIKE N'%{HttpUtility.UrlDecode(query)}%';";
+            var commandText = @$"
+                SELECT 
+                    Id, 
+                    {request.Column} 
+                FROM {request.Table} 
+                WHERE {request.Column} 
+                LIKE 
+                    N'%{request.DecodedQuery}%' 
+                AND 
+                    LanguageId={request.LanguageId}
+                AND
+                    Deleted=0;";
 
             await using var command = new SqlCommand(commandText, connection, sqlTransaction);
 
@@ -48,8 +55,8 @@ namespace EvrenDev.PublicApi.Controllers.Api
                     var item = new AutoCompleteResponse()
                     {
                         Id = Guid.Parse(reader["Id"].ToString()),
-                        Selector = column,
-                        Value = reader[column].ToString()
+                        Selector = request.Column,
+                        Value = reader[request.Column].ToString()
                     };
 
                     response.Add(item);
@@ -61,7 +68,7 @@ namespace EvrenDev.PublicApi.Controllers.Api
             {
                 var msg = ex.Message.ToString();
                 sqlTransaction.Rollback();
-                return BadRequest(new { error = true, selector = column, message = msg });
+                return BadRequest(new { error = true, selector = request.Column, message = msg });
             }
         }
     }

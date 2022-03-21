@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using Microsoft.Extensions.Localization;
+using EvrenDev.Infrastructure.Identity.Model;
 
 namespace EvrenDev.PublicApi
 {
@@ -45,8 +47,9 @@ namespace EvrenDev.PublicApi
 
             var options = new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture(new CultureInfo("tr-TR"))
+                DefaultRequestCulture = new RequestCulture(new CultureInfo("en-US"))
             };
+            
             app.UseRequestLocalization(options);
 
             app.UseMiddleware<LocalizationMiddleware>();

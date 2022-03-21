@@ -10,6 +10,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using EvrenDev.Application.Interfaces.Result;
+using EvrenDev.Application.Exceptions;
+using System.Threading.Tasks;
 
 namespace EvrenDev.Infrastructure.Identity.Extensions {
     public static class ServiceExtensions 
@@ -28,14 +33,14 @@ namespace EvrenDev.Infrastructure.Identity.Extensions {
                 {
                     // Signin Options
                     options.SignIn.RequireConfirmedEmail = true;
-                    options.SignIn.RequireConfirmedPhoneNumber = true;
+                    options.SignIn.RequireConfirmedPhoneNumber = false;
 
                     // Password settings.
                     options.Password.RequireDigit = true;
                     options.Password.RequireLowercase = true;
-                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireNonAlphanumeric = true;
                     options.Password.RequireUppercase = true;
-                    options.Password.RequiredLength = 8;
+                    options.Password.RequiredLength = 6;
                     options.Password.RequiredUniqueChars = 1;
 
                     // Lockout settings.
@@ -49,18 +54,16 @@ namespace EvrenDev.Infrastructure.Identity.Extensions {
                     options.User.RequireUniqueEmail = true;
                 })
                 .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
-
-            #region Services
+                .AddDefaultTokenProviders()
+                .AddTokenProvider("EvrenDevPublicApi", typeof(DataProtectorTokenProvider<ApplicationUser>));
 
             services.AddTransient<IIdentityService, IdentityService>();
-
-            #endregion Services
             
             services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
-            services.AddAuthentication(config =>
+            services.AddAuthentication(option =>
             {
-                config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(option =>
             {
@@ -77,6 +80,38 @@ namespace EvrenDev.Infrastructure.Identity.Extensions {
                     ValidAudience = configuration["JWTSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTSettings:Key"]))
                 };
+
+                option.Events = new JwtBearerEvents()
+                {
+                       OnAuthenticationFailed = context =>
+                       {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+                            return System.Threading.Tasks.Task.CompletedTask;
+                       },
+                    //    OnChallenge = context =>
+                    //    {
+                    //        context.HandleResponse();
+
+                    //        if(!context.Response.HasStarted) {
+                    //            context.Response.StatusCode = 401;
+                    //            context.Response.ContentType = "application/json";
+                    //            var result = JsonConvert.SerializeObject(Result<string>.Fail("You are not Authorized"));
+                    //            return context.Response.WriteAsync(result);
+                    //        } 
+                           
+                    //        return Task.CompletedTask;      
+                    //    },
+                    //    OnForbidden = context =>
+                    //    {
+                    //        context.Response.StatusCode = 403;
+                    //        context.Response.ContentType = "application/json";
+                    //        var result = JsonConvert.SerializeObject(Result<string>.Fail("You are not authorized to access this resource"));
+                    //        return context.Response.WriteAsync(result);
+                    //    },
+                };
             });
 
             services.AddCors(options =>
@@ -87,6 +122,7 @@ namespace EvrenDev.Infrastructure.Identity.Extensions {
                         builder.AllowAnyOrigin();
                         builder.AllowAnyMethod();
                         builder.AllowAnyHeader();
+                        builder.WithExposedHeaders("Token-Expired");
                     });
             });
         }

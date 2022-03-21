@@ -2,6 +2,7 @@
 using System;
 using Microsoft.AspNetCore.Identity;
 using EvrenDev.Infrastructure.Identity.Model;
+using EvrenDev.Application.DTOS.Auth;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Reflection;
 
@@ -37,10 +38,13 @@ namespace EvrenDev.Infrastructure.Identity
                 entity.ToTable(name: "Users");
             });
 
+            modelBuilder.Entity<ApplicationUser>().Navigation(e => e.RefreshTokens).AutoInclude();
+
             modelBuilder.Entity<ApplicationRole>(entity =>
             {
                 entity.ToTable(name: "Roles");
             });
+
             modelBuilder.Entity<ApplicationUserRole>(entity =>
             {
                 entity.HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -76,6 +80,11 @@ namespace EvrenDev.Infrastructure.Identity
             modelBuilder.Entity<IdentityUserToken<Guid>>(entity =>
             {
                 entity.ToTable("UserTokens");
+            });
+
+            modelBuilder.Entity<IdentityRefreshToken>(entity =>
+            {
+                entity.ToTable("RefreshTokens");
             });
         }
     }

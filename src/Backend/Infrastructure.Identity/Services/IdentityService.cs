@@ -53,13 +53,22 @@ namespace EvrenDev.Infrastructure.Identity.Services
         public async Task<Result<TokenResponse>> GetTokenAsync(TokenRequest model, 
             string ipAddress)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
+            var user = await _userManager.FindByEmailAsync(email: model.Email);
+            if(user == null) 
+                return Result<TokenResponse>.Fail(string.Format(_loc["login_user_not_fount"], model.Email));
+
+            var result = await _signInManager.PasswordSignInAsync( user: user, 
+                password: model.Password, 
+                isPersistent: false, 
+                lockoutOnFailure: true
+            );
+
             var response = new TokenResponse();
 
             if(result.Succeeded) {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-
-                JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user, ipAddress);
+                JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user: user, 
+                    ipAddress: ipAddress
+                );
                 
                 response.Id = user.Id;
                 response.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
@@ -69,23 +78,30 @@ namespace EvrenDev.Infrastructure.Identity.Services
 
                 var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
                 response.Roles = rolesList.ToList();
+                var message = string.Empty;
+
+                if(user.RefreshTokens != null && user.RefreshTokens.Any(token => token.IsActive)) {
+                    var activeRefreshToken = user.RefreshTokens.Where(a => a.IsActive == true).FirstOrDefault();
+                    response.RefreshToken = activeRefreshToken.Token;
+                    
+                    message = string.Format(_loc["login_success"], model.Email);
+                } else {
+                    var refreshToken = GenerateRefreshToken(ipAddress: ipAddress);
+                    response.RefreshToken = refreshToken.Token;
+
+                    user.RefreshTokens.Add(refreshToken);
+                    var updateResult = await _userManager.UpdateAsync(user);
+
+                    if(updateResult.Succeeded) {
+                        message = string.Format(_loc["login_success"], model.Email);
+                    } else {
+                        message = string.Format(_loc["login_update_info_failed"], model.Email);
+                    }
+                }
                 
-                var refreshToken = GenerateRefreshToken(ipAddress);
-                response.RefreshToken = refreshToken.Token;
-
-                var message = string.Format(_loc["login_success"], model.Email);
-
                 return Result<TokenResponse>.Success(response, message);
             } else {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-
-                if (user != null) {
-                    var message = string.Format(_loc["login_password_failed"], model.Email);
-                    return Result<TokenResponse>.Fail(message);
-                } else {
-                    var message = _loc["login_email_failed"];
-                    return Result<TokenResponse>.Fail(message);
-                }
+                return Result<TokenResponse>.Fail(_loc["login_failed"]);
             }
         }
 
@@ -108,47 +124,13 @@ namespace EvrenDev.Infrastructure.Identity.Services
                 new Claim("uid", user.Id.ToString()),
                 new Claim("first_name", user.FirstName),
                 new Claim("last_name", user.LastName),
-                new Claim("full_name", $"{user.FirstName} {user.LastName}"),
+                new Claim("full_name", user.FullName),
                 new Claim("ip", ipAddress)
             }
             .Union(userClaims)
             .Union(roleClaims);
             
             return JWTGeneration(claims);
-        }
-
-        private JwtSecurityToken JWTGeneration(IEnumerable<Claim> claims)
-        {
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
-            var jwtSecurityToken = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Audience,
-                claims: claims,
-                notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
-                signingCredentials: signingCredentials);
-            return jwtSecurityToken;
-        }
-
-        private string RandomTokenString()
-        {
-            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            var randomBytes = new byte[40];
-            rngCryptoServiceProvider.GetBytes(randomBytes);
-            return BitConverter.ToString(randomBytes).Replace("-", "");
-        }
-
-        private RefreshToken GenerateRefreshToken(string ipAddress)
-        {
-            return new RefreshToken
-            {
-                Token = RandomTokenString(),
-                Expires = DateTime.UtcNow.AddDays(7),
-                Created = DateTime.UtcNow,
-                CreatedByIp = ipAddress
-            };
         }
 
         public async Task<Result<TokenResponse>> ForgotPassword(ForgotPasswordRequest model, 
@@ -164,9 +146,9 @@ namespace EvrenDev.Infrastructure.Identity.Services
                 var endPointUri = new Uri(string.Concat($"{url}/", route));
                 var link = QueryHelpers.AddQueryString(endPointUri.ToString(), "code", code);
 
-                const string subject = "Parolamı Sıfırla";
-                const string title = "Parolamı Unutttum :(";
-                const string message = "Bağlantıyı kullanarak parolanınızı sıfırlayabilirsiniz.";
+                var subject = _loc["forgot_password_subject"];
+                var title = _loc["forgot_password_title"];
+                var message = _loc["forgot_password_message"];;
 
                 using var reader = new StreamReader("./MailTemplate/forgot-password.html");
                 var htmlContent = reader.ReadToEnd();
@@ -181,7 +163,7 @@ namespace EvrenDev.Infrastructure.Identity.Services
                     ToEmail = model.Email,
                     ToName = model.Email,
                     HtmlContent = htmlContent,
-                    PlainTextContent = $"Parola sıfırlama kodunuz - {code}",
+                    PlainTextContent = string.Format(_loc["forgot_password_plaintext"], code),
                     Subject = subject,
                 };
                 
@@ -189,32 +171,195 @@ namespace EvrenDev.Infrastructure.Identity.Services
                 {
                     await _emailSender.SendEmailAsync(emailRequest);
 
-                    return Result<TokenResponse>.Success(message: $"{model.Email} eposta adresine parolanızı sıfırlamanız için gerekli bilgiler gönderildi.");
+                    var responseMessage = string.Format(_loc["forgot_password_success_message"], model.Email);
+                    return Result<TokenResponse>.Success(message: responseMessage);
                 }
                 catch (Exception ex)
                 {
-                    return Result<TokenResponse>.Fail($"Hata oluştu: ${ex.Message}");
+                    var responseMessage = string.Format(_loc["forgot_password_error_message"], ex.Message);
+
+                    return Result<TokenResponse>.Fail(message: responseMessage);
                 }
 
                 #endregion
             }
 
-            return Result<TokenResponse>.Fail($"{model.Email} eposta adresi ile kayıtlı bir kullanıcı sistemde bulunamadı.");
+
+            var userNotFoundMessage = string.Format(_loc["forgot_password_user_not_found"], model.Email);
+            return Result<TokenResponse>.Fail(message: userNotFoundMessage);
         }
 
         public async Task<Result<string>> ResetPassword(ResetPasswordRequest model)
         {
-            var account = await _userManager.FindByEmailAsync(model.Email);
-            if (account == null) throw new ApiException($"{model.Email} eposta adresi ile kayıtlı bir hesap bulunamadı.");
-            var result = await _userManager.ResetPasswordAsync(account, model.Token, model.Password);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) 
+            {
+                var message = string.Format(_loc["reset_password_user_not_found"], model.Email);
+                    throw new ApiException(message: message);
+            }
+            
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            var responseMessage = string.Empty;
+
             if (result.Succeeded)
             {
-                return Result<string>.Success(model.Email, message: "Parola başarılı bir şekilde sıfırlandı.");
+                responseMessage = string.Format(_loc["reset_password_success", model.Email]);
             }
             else
             {
-                return Result<string>.Fail("Parola sıfırlanırken bir hata oluştu.");
+                responseMessage = string.Format(_loc["reset_password_fail", model.Email]);
+            }
+
+            return Result<string>.Fail(responseMessage);
+        }
+
+        public async Task<Result<string>> LogoutAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                await _userManager.RemoveAuthenticationTokenAsync(user, "EvrenDevPublicApi", "RefreshToken");
+                await _signInManager.SignOutAsync();
+                
+                var message = string.Format(_loc["logout_success"], user.FullName);
+                
+                return Result<string>.Success(message);
+            } else {
+                return Result<string>.Fail(_loc["logout_faield"]);
             }
         }
+
+        public async Task<Result<RefreshTokenResponse>> RefreshTokenAsync(RefreshTokenRequest request,
+            string ipAddress)
+        {
+            if(request == null)
+                return await Result<RefreshTokenResponse>.FailAsync(_loc["refresh_request_failed"]);
+
+            var principal = GetPrincipalFromExpiredToken(request.Token);
+            if(principal == null)
+                return await Result<RefreshTokenResponse>.FailAsync(_loc["invalid_token_or_refresh_token"]);
+
+            string email = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email).Value;
+            var user = await _userManager.FindByEmailAsync(email: email);
+
+            if (user == null || !user.HasValidRefreshToken(request.RefreshToken))
+                return await Result<RefreshTokenResponse>.FailAsync(_loc["invalid_token_or_refresh_token"]);
+
+            var refreshToken = user.GetRefreshToken(request.RefreshToken);
+
+            if (!refreshToken.IsActive)
+                return await Result<RefreshTokenResponse>.FailAsync(_loc["refresh_token_is_not_active"]); 
+
+
+            JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user: user, 
+                ipAddress: ipAddress
+            );
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            var newRefreshToken = GenerateRefreshToken(ipAddress: ipAddress);
+
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            refreshToken.ReplacedByToken = newRefreshToken.Token;
+
+            user.RefreshTokens.Add(newRefreshToken);
+            await _userManager.UpdateAsync(user);
+
+            var response = new RefreshTokenResponse() {
+                Token = token,
+                RefreshToken = newRefreshToken.Token
+            };
+
+            var message = _loc["refresh_token_success"];
+            return await Result<RefreshTokenResponse>.SuccessAsync(response, message);
+        }
+
+        public async Task<Result<string>> RevokeTokenAsync(RevokeTokenRequest request, 
+            string ipAddress)
+        {
+            if(request == null)
+                return await Result<string>.FailAsync(_loc["revoke_request_failed"]);
+
+            var principal = GetPrincipalFromExpiredToken(request.Token);
+            if(principal == null)
+                return await Result<string>.FailAsync(_loc["invalid_token"]);
+
+            string email = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email).Value;
+            var user = await _userManager.FindByEmailAsync(email: email);
+
+            if (user == null || !user.HasValidRefreshToken(request.RefreshToken))
+                return await Result<string>.FailAsync(_loc["invalid_token_or_refresh_token"]);
+
+            var refreshToken = user.GetRefreshToken(request.RefreshToken);
+
+            if (!refreshToken.IsActive)
+                return await Result<string>.FailAsync(_loc["refresh_token_is_not_active"]); 
+
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            refreshToken.ReplacedByToken = null;
+            await _userManager.UpdateAsync(user);
+
+            return await Result<string>.SuccessAsync(_loc["revoke_token_success"]);
+        }
+
+        private JwtSecurityToken JWTGeneration(IEnumerable<Claim> claims)
+        {
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+            var jwtSecurityToken = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                claims: claims,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                signingCredentials: signingCredentials);
+
+            return jwtSecurityToken;
+        }
+
+        private string RandomTokenString()
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var randomBytes = new byte[40];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+            return BitConverter.ToString(randomBytes).Replace("-", "");
+        }
+
+        private IdentityRefreshToken GenerateRefreshToken(string ipAddress)
+        {
+            return new IdentityRefreshToken
+            {
+                Token = RandomTokenString(),
+                Expires = DateTime.UtcNow.AddDays(7),
+                Created = DateTime.UtcNow,
+                CreatedByIp = ipAddress,
+            };
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = symmetricSecurityKey,
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+
+            return principal;
+
+        }
+
     }
 }
